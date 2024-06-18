@@ -48,7 +48,7 @@ def loadData(fileName):
 
 
 # kd-tree每个结点中主要包含的数据结构如下
-class KdNode:
+class KdNode:#节点class，包含数据有分界节点、分界值、左右子树
     def __init__(self, dom_elt, split, left, right):
         self.dom_elt = dom_elt  # k维向量节点(k维空间中的一个样本点)
         self.split = split  # 整数（进行分割维度的序号）
@@ -58,20 +58,22 @@ class KdNode:
 
 class KdTree:
     '''
-    对于输入空间构建KD树
+    对于输入空间构建KD树，包含数据：根节点、递归使用生成子树的函数
     '''
     def __init__(self, data):
         # data为list格式的数据
         k = len(data[0])  # 数据维度
 
-        def CreateNode(split, data_set):  # 按第split维划分数据集dataset创建KdNode
-            if not data_set:  # 数据集为空
+        def CreateNode(split, data_set): 
+            # 按第split维划分数据集dataset创建KdNode；有递归效果，根据树的创建过程需配合kdNode类
+            #递归理解：
+            if not data_set:  # 数据集为空，返回None结束递归
                 return None
             # 对于输入的列表版找第split维进行排序
             data_set.sort(key=lambda x: x[split])
             split_pos = len(data_set) // 2  # 找到中位数的索引
             median = data_set[split_pos]  # 中位数分割点
-            split_next = (split + 1) % k  # cycle coordinates
+            split_next = (split + 1) % k  # cycle coordinates；轮流更换划分的维度依据，%k是当轮换次数超过维度时需重头轮换；可改进地更科学
 
             # 递归的创建kd树
             return KdNode(
@@ -80,8 +82,8 @@ class KdTree:
                 CreateNode(split_next, data_set[:split_pos]),  # 创建左子树
                 CreateNode(split_next, data_set[split_pos + 1:]))  # 创建右子树
 
-        self.root = CreateNode(0, data)  # 从第0维分量开始构建kd树,返回根节点
-
+        self.root = CreateNode(0, data)  # 从第0维分量开始构建kd树,返回根节点；根节点接着一个内部节点，即根节点接下来不是二叉
+#树结构解析：和概念图（有内部节点和叶子节点）不同，以上是一个根节点接一个内部叶子节点（既能划分又含样本）
 
 
 
