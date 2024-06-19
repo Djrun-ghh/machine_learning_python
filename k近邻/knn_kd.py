@@ -119,6 +119,7 @@ class KnnKd():
                               0)  # python中用float("inf")和float("-inf")表示正负无穷；
 
             nodes_visited = 1
+            #追加node节点访问数量+1，node=1指本次travel了自己这个节点所以为1；后续会加上其他travel的阶段的nodes_visited数
 
             s = kd_node.split  # 进行分割的维度
             pivot = kd_node.dom_elt  # 进行分割的“轴”
