@@ -95,7 +95,7 @@ class KnnKd():
         self.result = namedtuple("Result_tuple",
                         "nearest_point  nearest_dist  nodes_visited")
         self.data_label_dict = {''.join([str(j) for j in traindataArr[i]]): trainlabelArr[i] for i in range(len(trainlabelArr)) }
-
+    #构造函数：该dict的key为每个数据样本的每个特征值的拼接join（），value为相应的类别；result的作用：
 
 
     def find_nearest(self, point):
@@ -109,14 +109,14 @@ class KnnKd():
         def travel(kd_node, target, max_dist):
             '''
             递归在kd树中进行搜索，对应的point
-            :param kd_node: kd树的节点
+            :param kd_node: kd树的节点，kdNode类对象，
             :param target: 待查找的节点
             :param max_dist:  以待查找节点为圆心的超球的半径
             :return: 返回最终的numed_tuple
             '''
             if kd_node is None:
                 return self.result([0] * k, float("inf"),
-                              0)  # python中用float("inf")和float("-inf")表示正负无穷
+                              0)  # python中用float("inf")和float("-inf")表示正负无穷；
 
             nodes_visited = 1
 
