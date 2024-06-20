@@ -109,20 +109,22 @@ class KnnKd():
         def travel(kd_node, target, max_dist):
             '''
             递归在kd树中进行搜索，对应的point
-            :param kd_node: kd树的节点，kdNode类对象，
-            :param target: 待查找的节点
-            :param max_dist:  以待查找节点为圆心的超球的半径
+            :param kd_node: kd树的节点，kdNode类对象
+            :param target: 待查找的节点，是每次递归中不变的变量
+            :param max_dist:  以待查找节点为圆心的超球的半径，依据？不断缩小
             :return: 返回最终的numed_tuple
             '''
             if kd_node is None:
                 return self.result([0] * k, float("inf"),
                               0)  # python中用float("inf")和float("-inf")表示正负无穷；
+                #停止递归
 
             nodes_visited = 1
             #追加node节点访问数量+1，node=1指本次travel了自己这个节点所以为1；后续会加上其他travel的阶段的nodes_visited数
 
             s = kd_node.split  # 进行分割的维度
             pivot = kd_node.dom_elt  # 进行分割的“轴”
+            #更新遍历详细——维度和一个分割点
 
             if target[s] <= pivot[s]:  # 如果目标点第s维小于分割轴的对应值(目标离左子树更近)
                 nearer_node = kd_node.left  # 下一个访问节点为左子树根节点
@@ -131,15 +133,17 @@ class KnnKd():
                 nearer_node = kd_node.right  # 下一个访问节点为右子树根节点
                 further_node = kd_node.left
 
-            temp1 = travel(nearer_node, target, max_dist)  # 进行遍历找到包含目标点的区域
+            temp1 = travel(nearer_node, target, max_dist)  
+            # 进行递归遍历找到包含目标点的区域
 
             nearest = temp1.nearest_point  # 以此叶结点作为“当前最近点”
             dist = temp1.nearest_dist  # 更新最近距离
+            #从递归角度看，是一个递归结果传递的过程
 
-            nodes_visited += temp1.nodes_visited
+            nodes_visited += temp1.nodes_visited  #遍历次数叠加，越外层的递归其值越大
 
             if dist < max_dist:
-                max_dist = dist  # 最近点将在以目标点为球心，max_dist为半径的超球体内
+                max_dist = dist  # 最近点将在以目标点为球心，max_dist为半径的超球体内；更新max_dist，有条件判断是因为末节点的dist是无限大
 
             temp_dist = abs(pivot[s] - target[s])  # 第s维上目标点与分割超平面的距离
             if max_dist < temp_dist:  # 判断超球体是否与超平面相交
